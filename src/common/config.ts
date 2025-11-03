@@ -7,9 +7,11 @@ dotenv();
 export const configSchema = Joi.object<IConfig, true>({
   PORT: Joi.number().required(),
   DB_URL: Joi.string().required(),
+  JWT_SECRET_KEY: Joi.string().required(),
 });
 
 export const config: IConfig = {
   PORT: Number(process.env.PORT),
   DB_URL: String(process.env.DB_URL),
+  JWT_SECRET_KEY: String(process.env.JWT_SECRET_KEY),
 };
