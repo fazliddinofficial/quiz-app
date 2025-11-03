@@ -5,5 +5,5 @@ export interface IConfig {
 
 export enum UserRoleEnum {
   student = 'student',
-  teacher = 'teacher'
+  teacher = 'teacher',
 }
