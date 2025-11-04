@@ -4,4 +4,6 @@ export const CONTROLLERS_NAME = {
   updateTeacherById: 'updateTeacherById',
 
   createQuiz: 'createQuiz',
+
+  createQuestion: 'createQuestion',
 };

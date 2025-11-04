@@ -1,15 +1,16 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Question } from "./entity";
-import { Model } from "mongoose";
-import { CreateQuestionDto } from "./dto/create-question.dto";
-import { Quiz } from "../quiz/entity";
-import { NotFoundError } from "rxjs";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Question } from './entity';
+import { Model } from 'mongoose';
+import { CreateQuestionDto } from './dto/create-question.dto';
+import { Quiz } from '../quiz/entity';
 
 @Injectable()
 export class QuestionService {
-  constructor(@InjectModel(Question.name) private readonly QuestionModel: Model<Question>,
-    @InjectModel(Quiz.name) private readonly QuizModel: Model<Quiz>) { }
+  constructor(
+    @InjectModel(Question.name) private readonly QuestionModel: Model<Question>,
+    @InjectModel(Quiz.name) private readonly QuizModel: Model<Quiz>,
+  ) {}
 
   async createQuestion({ quizId, ...data }: CreateQuestionDto) {
     const foundQuiz = await this.QuizModel.findById(quizId);

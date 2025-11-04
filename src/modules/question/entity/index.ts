@@ -25,6 +25,6 @@ export class Question {
 export const QuestionSchema = SchemaFactory.createForClass(Question);
 
 export const QuestionModelDef: ModelDefinition = {
-  name: Quiz.name,
+  name: Question.name,
   schema: QuestionSchema,
 };
