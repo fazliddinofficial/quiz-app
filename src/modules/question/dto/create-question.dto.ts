@@ -1,13 +1,18 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsObject, IsString } from 'class-validator';
 
 export class CreateQuestionDto {
   @IsString()
   @IsNotEmpty()
   text: string;
 
-  variants: string[];
+  @IsObject()
+  variants: Record<string, string>;
 
   @IsString()
   @IsNotEmpty()
-  correctAnswer: string
+  correctAnswer: string;
+
+  @IsString()
+  @IsNotEmpty()
+  quizId: string;
 }

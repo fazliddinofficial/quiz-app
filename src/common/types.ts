@@ -10,7 +10,7 @@ export interface IConfig {
 export enum UserRoleEnum {
   student = 'student',
   teacher = 'teacher',
-  whiteList = 'whiteList'
+  whiteList = 'whiteList',
 }
 
 export type JwtPayload = {
@@ -21,7 +21,7 @@ export type JwtPayload = {
 
 export enum QuizTypeEnum {
   individual = 'individual',
-  group = 'group'
+  group = 'group',
 }
 
 export type HandlersKeys = keyof typeof CONTROLLERS_NAME;

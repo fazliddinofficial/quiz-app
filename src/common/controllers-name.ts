@@ -3,5 +3,5 @@ export const CONTROLLERS_NAME = {
   signInTeacher: 'signInTeacher',
   updateTeacherById: 'updateTeacherById',
 
-  createQuiz: 'createQuiz'
+  createQuiz: 'createQuiz',
 };

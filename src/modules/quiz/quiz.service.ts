@@ -9,8 +9,8 @@ import { Teacher } from '../teacher/entity';
 export class QuizService {
   constructor(
     @InjectModel(Quiz.name) private readonly QuizModel: Model<Quiz>,
-    @InjectModel(Teacher.name) private readonly TeacherModel: Model<Teacher>
-  ) { }
+    @InjectModel(Teacher.name) private readonly TeacherModel: Model<Teacher>,
+  ) {}
 
   async createQuiz(data: CreateQuizDto, teacherId: string): Promise<HydratedDocument<Quiz>> {
     const createdQuiz = await this.QuizModel.create(data);
@@ -18,7 +18,7 @@ export class QuizService {
     const foundTeacher = await this.TeacherModel.findById(teacherId);
 
     if (!foundTeacher) {
-      throw new NotFoundException("Teacher not found in create quiz service!")
+      throw new NotFoundException('Teacher not found in create quiz service!');
     }
 
     foundTeacher?.createdQuizzes.push(`${createdQuiz._id}`);

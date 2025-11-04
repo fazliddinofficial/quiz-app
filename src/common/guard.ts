@@ -1,15 +1,21 @@
-import * as jwt from 'jsonwebtoken'
-import { HandlersKeys, JwtPayload } from "./types";
-import { BadRequestException, CanActivate, ExecutionContext, Injectable, NotFoundException, UnauthorizedException, UseGuards } from '@nestjs/common';
+import * as jwt from 'jsonwebtoken';
+import { HandlersKeys, JwtPayload } from './types';
+import {
+  BadRequestException,
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { config } from './config';
 import { PERMISSIONS } from './permission';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
 
     const action = context.getHandler().name as HandlersKeys;

@@ -8,4 +8,4 @@ import { TeacherModelDef } from '../teacher/entity';
   imports: [MongooseModule.forFeature([QuizModelDef, TeacherModelDef])],
   providers: [QuizService],
 })
-export class QuizModule { }
+export class QuizModule {}

@@ -3,6 +3,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { QuestionModelDef } from './entity';
 
 @Module({
-  imports: [MongooseModule.forFeature([QuestionModelDef])]
+  imports: [MongooseModule.forFeature([QuestionModelDef])],
 })
-export class QuestionModule { }
+export class QuestionModule {}
