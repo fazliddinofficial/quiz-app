@@ -1,5 +1,6 @@
 import { ModelDefinition, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
+import { QuizTypeEnum } from 'src/common/types';
 
 @Schema({ versionKey: false, timestamps: true })
 export class Quiz {
@@ -13,6 +14,13 @@ export class Quiz {
     ref: 'Question',
   })
   questions: string[];
+
+  @Prop({
+    type: String,
+    enum: Object.keys(QuizTypeEnum),
+    required: true,
+  })
+  quizType: QuizTypeEnum;
 }
 
 export const QuizSchema = SchemaFactory.createForClass(Quiz);

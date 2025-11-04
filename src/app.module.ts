@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { config } from './common/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { QuizModule } from './modules/quiz/quiz.module';
+import { QuestionModule } from './modules/question/question.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { QuizModule } from './modules/quiz/quiz.module';
     TeacherModule,
     AuthModule,
     QuizModule,
+    QuestionModule,
   ],
   controllers: [],
   providers: [],
