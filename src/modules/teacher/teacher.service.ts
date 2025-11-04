@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { createHash } from 'src/common/bcrypt';
 import { JwtPayload } from 'src/common/types';
-import { CreatedTeacherOutputType } from './output/created-teacher.output';
+import { TeacherOutputType } from './output/created-teacher.output';
 
 @Injectable()
 export class TeacherService {
@@ -20,8 +20,10 @@ export class TeacherService {
     lastName,
     password,
     phoneNumber,
-  }: CreateTeacherDto): Promise<CreatedTeacherOutputType> {
-    const isPhoneNumberUnique = await this.TeacherModel.findOne({ phoneNumber: phoneNumber });
+  }: CreateTeacherDto): Promise<TeacherOutputType> {
+    const isPhoneNumberUnique = await this.TeacherModel.findOne({ phoneNumber: phoneNumber })
+      .lean()
+      .exec();
 
     if (isPhoneNumberUnique) {
       throw new BadRequestException('Teacher is already exist with this phone number!');
@@ -44,6 +46,6 @@ export class TeacherService {
 
     const token = this.jwtService.sign(payload);
 
-    return { createdTeacher, token };
+    return { teacher: createdTeacher, token };
   }
 }
