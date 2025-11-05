@@ -1,5 +1,5 @@
 import { ModelDefinition, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Quiz } from 'src/modules/quiz/entity';
+import { Types } from 'mongoose';
 
 @Schema({ versionKey: false, timestamps: true })
 export class Question {
@@ -20,6 +20,12 @@ export class Question {
     required: true,
   })
   correctAnswer: string;
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: 'Quiz',
+  })
+  quizId: string;
 }
 
 export const QuestionSchema = SchemaFactory.createForClass(Question);

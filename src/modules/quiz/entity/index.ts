@@ -1,6 +1,7 @@
 import { ModelDefinition, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
 import { QuizTypeEnum } from 'src/common/types';
+import { Question } from 'src/modules/question/entity';
 
 @Schema({ versionKey: false, timestamps: true })
 export class Quiz {
@@ -11,7 +12,7 @@ export class Quiz {
 
   @Prop({
     type: [Types.ObjectId],
-    ref: 'Question',
+    ref: Question.name,
   })
   questions: string[];
 
