@@ -6,6 +6,8 @@ import { config } from './common/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { QuizModule } from './modules/quiz/quiz.module';
 import { QuestionModule } from './modules/question/question.module';
+import { SessionModule } from './modules/session/session.module';
+import { AnswerModule } from './modules/answer/answer.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { QuestionModule } from './modules/question/question.module';
     AuthModule,
     QuizModule,
     QuestionModule,
+    SessionModule,
+    AnswerModule,
   ],
   controllers: [],
   providers: [],
