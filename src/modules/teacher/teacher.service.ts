@@ -26,7 +26,7 @@ export class TeacherService {
       .exec();
 
     if (isPhoneNumberUnique) {
-      throw new BadRequestException('Teacher is already exist with this phone number!');
+      throw new BadRequestException('Telefon raqam foydalangan. Boshqa raqam tanlang!');
     }
 
     const hash = await createHash(password);

@@ -24,13 +24,13 @@ export class AuthService {
     const foundTeacher = await this.TeacherModel.findOne({ phoneNumber }).lean().exec();
 
     if (!foundTeacher) {
-      throw new NotFoundException('Teacher not found with this phone!');
+      throw new NotFoundException('Foydalanuvchi topilmadi!');
     }
 
     const isPasswordCorrect = await compare({ hash: foundTeacher.password, plainText: password });
 
     if (!isPasswordCorrect) {
-      throw new BadRequestException('Password is not correct!');
+      throw new BadRequestException('Parolingiz mos kelmadi!');
     }
 
     const payload: JwtPayload = {
