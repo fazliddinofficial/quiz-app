@@ -25,7 +25,7 @@ export class Session {
 
   @Prop({
     type: Date,
-    required: true
+    required: true,
   })
   duration: Date;
 
@@ -36,14 +36,20 @@ export class Session {
 
   @Prop({
     type: Boolean,
-    default: true
+    default: true,
   })
-  isActive: boolean
+  isActive: boolean;
+
+  @Prop({
+    type: Boolean,
+    default: false,
+  })
+  isStarted: boolean;
 }
 
 export const SessionSchema = SchemaFactory.createForClass(Session);
 
 export const SessionModelDef: ModelDefinition = {
   name: Session.name,
-  schema: SessionSchema
-}
+  schema: SessionSchema,
+};

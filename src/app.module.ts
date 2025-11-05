@@ -8,10 +8,12 @@ import { QuizModule } from './modules/quiz/quiz.module';
 import { QuestionModule } from './modules/question/question.module';
 import { SessionModule } from './modules/session/session.module';
 import { AnswerModule } from './modules/answer/answer.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     MongooseModule.forRoot(config.DB_URL),
+    ScheduleModule.forRoot(),
     UserModule,
     TeacherModule,
     AuthModule,

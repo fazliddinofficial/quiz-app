@@ -6,4 +6,6 @@ export const CONTROLLERS_NAME = {
   createQuiz: 'createQuiz',
 
   createQuestion: 'createQuestion',
+
+  createSession: 'createSession',
 };

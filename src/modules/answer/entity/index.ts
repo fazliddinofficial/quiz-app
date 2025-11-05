@@ -1,5 +1,5 @@
-import { ModelDefinition, Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Types } from "mongoose";
+import { ModelDefinition, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Types } from 'mongoose';
 
 export type AnswerDocument = Answer & Document;
 
@@ -7,24 +7,24 @@ export type AnswerDocument = Answer & Document;
 export class Answer {
   @Prop({
     type: Types.ObjectId,
-    ref: "User"
+    ref: 'User',
   })
   studentId: Types.ObjectId;
 
   @Prop({
     type: Types.ObjectId,
-    ref: 'Session'
+    ref: 'Session',
   })
   sessionId: Types.ObjectId;
 
   @Prop({
     type: Types.ObjectId,
-    ref: 'Question'
+    ref: 'Question',
   })
   question: Types.ObjectId;
 
   @Prop({
-    type: Object
+    type: Object,
   })
   selectedOption?: Record<string, string | Types.ObjectId>;
 
@@ -35,8 +35,8 @@ export const AnswerSchema = SchemaFactory.createForClass(Answer);
 
 export const AnswerModelDef: ModelDefinition = {
   name: Answer.name,
-  schema: AnswerSchema
-}
+  schema: AnswerSchema,
+};
 
 AnswerSchema.index({ sessionId: 1, studentId: 1 });
 AnswerSchema.index({ quizId: 1, questionId: 1 });

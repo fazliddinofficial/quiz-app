@@ -5,8 +5,6 @@ import { QuizModelDef } from '../quiz/entity';
 import { TeacherModelDef } from '../teacher/entity';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([SessionModelDef, QuizModelDef, TeacherModelDef]),
-  ]
+  imports: [MongooseModule.forFeature([SessionModelDef, QuizModelDef, TeacherModelDef])],
 })
-export class SessionModule { }
+export class SessionModule {}

@@ -20,7 +20,7 @@ export class User {
   @Prop({
     type: [Types.ObjectId],
     default: [],
-    ref: 'Answer'
+    ref: 'Answer',
   })
   answers: string[];
 }
