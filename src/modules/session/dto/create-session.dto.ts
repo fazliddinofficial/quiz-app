@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateSessionDto {
   quizId: string;
@@ -9,7 +9,6 @@ export class JoinStudentToSessionDto {
   @IsNotEmpty()
   userName: string;
 
-  @IsNumber()
   @IsNotEmpty()
-  code: number
+  code: number;
 }

@@ -1,5 +1,7 @@
+import { Type } from '@nestjs/common';
 import { ModelDefinition, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
+import { User } from 'src/modules/user/entity';
 
 @Schema({ versionKey: false, timestamps: true })
 export class Session {
@@ -7,7 +9,7 @@ export class Session {
     type: [Types.ObjectId],
     ref: 'User',
   })
-  students: string[];
+  students: User[] | Types.ObjectId[];
 
   @Prop({
     type: Types.ObjectId,

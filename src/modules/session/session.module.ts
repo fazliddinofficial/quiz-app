@@ -7,16 +7,15 @@ import { SessionService } from './session.service';
 import { UserService } from '../user/user.service';
 import { UserModelDef } from '../user/entity';
 import { SessionController } from './session.controller';
+import { SessionGateway } from './session.gateway';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      SessionModelDef,
-      QuizModelDef,
-      TeacherModelDef,
-      UserModelDef
-    ])],
-  providers: [SessionService, UserService],
-  controllers: [SessionController]
+    MongooseModule.forFeature([SessionModelDef, QuizModelDef, TeacherModelDef, UserModelDef]),
+  ],
+  providers: [SessionGateway, SessionService, UserService],
+  controllers: [SessionController],
+  exports: [SessionGateway, SessionService],
 })
-export class SessionModule { }
+export class SessionModule {}

@@ -9,5 +9,7 @@ export const CONTROLLERS_NAME = {
 
   createSession: 'createSession',
   deactivateSession: 'deactivateSession',
-  joinStudentToSessionByCode: 'joinStudentToSessionByCode'
+  joinStudentToSessionByCode: 'joinStudentToSessionByCode',
+
+  getSessionById: 'getSessionById',
 };

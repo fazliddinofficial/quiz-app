@@ -22,7 +22,7 @@ export class QuestionService {
     const createdQuestion = await this.QuestionModel.create(data);
 
     foundQuiz.questions.push(String(createdQuestion._id));
-    foundQuiz.save();
+    await foundQuiz.save();
 
     return createdQuestion;
   }

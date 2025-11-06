@@ -8,6 +8,7 @@ import { UserService } from '../user/user.service';
 import { JwtPayload } from 'src/common/types';
 import { JwtService } from '@nestjs/jwt';
 import { JoinStudentToSessionDto } from './dto/create-session.dto';
+import { User } from '../user/entity';
 
 @Injectable()
 export class SessionService {
@@ -16,8 +17,8 @@ export class SessionService {
     @InjectModel(Teacher.name) private readonly TeacherModel: Model<Teacher>,
     @InjectModel(Quiz.name) private readonly QuizModel: Model<Quiz>,
     private readonly UserService: UserService,
-    private readonly JwtService: JwtService
-  ) { }
+    private readonly JwtService: JwtService,
+  ) {}
 
   async createSession(quizId: string, teacherId: string) {
     const foundSession = await this.SessionModel.findOne({ quizId, isActive: true });
@@ -71,29 +72,38 @@ export class SessionService {
     userId: string;
     questionId: string;
     sessionId: string;
-  }) { }
+  }) {}
 
-  async joinStudentToSessionByCode({ code,
-    userName
-  }: JoinStudentToSessionDto) {
-    const foundSession = await this.SessionModel.findOne({ code });
+  async joinStudentToSessionByCode({ code, userName }: JoinStudentToSessionDto) {
+    code = Number(code);
+    const foundSession = await this.SessionModel.findOne({ code })
+      .populate<{ students: User[] }>('students')
+      .exec();
 
     if (!foundSession) {
       throw new NotFoundException('Quiz topilmadi!');
     }
 
-    const createdStudent = await this.UserService.createUser({ fullName: userName })
+    const createdStudent = await this.UserService.createUser({ fullName: userName });
 
-    foundSession?.students.push(String(createdStudent._id));
-    foundSession?.save();
+    foundSession?.students.push(createdStudent);
+    await foundSession?.save();
 
     const jwtPayload: JwtPayload = {
       role: createdStudent.role,
       userId: createdStudent._id,
-    }
+    };
 
     const token = this.JwtService.sign(jwtPayload);
 
-    return { token, createdStudent, foundSession }
+    return { token, createdStudent, foundSession };
+  }
+
+  async getSessionById(sessionId: Types.ObjectId) {
+    return await this.SessionModel.findById(sessionId);
+  }
+
+  async getSessionByCode(code: number) {
+    return await this.SessionModel.findOne({ code }).populate('students').exec();
   }
 }
