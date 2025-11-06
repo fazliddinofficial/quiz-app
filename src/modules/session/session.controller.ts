@@ -1,8 +1,9 @@
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import { Body, Controller, Post, Put, Req } from '@nestjs/common';
 import { SessionService } from './session.service';
 import { CONTROLLERS_NAME } from 'src/common/controllers-name';
 import { UseAuthGuard } from 'src/common/guard';
-import { CreateSessionDto, JoinStudentToSessionDto } from './dto/create-session.dto';
+import { JoinStudentToSessionDto } from './dto/create-session.dto';
+import { Types } from 'mongoose';
 
 @Controller('session')
 export class SessionController {
@@ -10,18 +11,18 @@ export class SessionController {
 
   @UseAuthGuard()
   @Post()
-  [CONTROLLERS_NAME.createSession](@Body() quizId: string, @Req() req: Request) {
-    return this.sessionService.createSession(quizId, req['userId']);
+  [CONTROLLERS_NAME.createSession](@Body() data: { quizId: string }, @Req() req: Request) {
+    return this.sessionService.createSession(data.quizId, req['userId']);
   }
 
   @UseAuthGuard()
-  @Post()
-  [CONTROLLERS_NAME.deactivateSession](@Body() sessionId: string) {
+  @Put('de-active-session')
+  [CONTROLLERS_NAME.deactivateSession](@Body() sessionId: Types.ObjectId) {
     return this.sessionService.deactivateSession(sessionId);
   }
 
   @UseAuthGuard()
-  @Post()
+  @Post('join')
   [CONTROLLERS_NAME.joinStudentToSessionByCode](@Body() data: JoinStudentToSessionDto) {
     return this.sessionService.joinStudentToSessionByCode(data);
   }

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Session } from './entity';
 import { Teacher } from '../teacher/entity';
 import { Quiz } from '../quiz/entity';
@@ -20,6 +20,12 @@ export class SessionService {
   ) { }
 
   async createSession(quizId: string, teacherId: string) {
+    const foundSession = await this.SessionModel.findOne({ quizId, isActive: true });
+
+    if (foundSession) {
+      return foundSession;
+    }
+
     const expiresAt = new Date();
 
     const foundQuiz = await this.QuizModel.findById(quizId).lean().exec();
@@ -43,10 +49,10 @@ export class SessionService {
     return createdSession;
   }
 
-  async deactivateSession(sessionId: string) {
+  async deactivateSession(sessionId) {
     const foundSession = await this.SessionModel.findByIdAndUpdate(
       sessionId,
-      { isActive: true },
+      { isActive: false, isStarted: false },
       { new: true },
     );
 
@@ -54,7 +60,7 @@ export class SessionService {
       throw new NotFoundException('Quiz topilmadi!');
     }
 
-    return { message: 'Quiz tugadi!' };
+    return { message: 'Quiz tugadi!', foundSession };
   }
 
   async markCorrectAnswer({

@@ -6,6 +6,7 @@ import { TeacherModelDef } from '../teacher/entity';
 import { SessionService } from './session.service';
 import { UserService } from '../user/user.service';
 import { UserModelDef } from '../user/entity';
+import { SessionController } from './session.controller';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { UserModelDef } from '../user/entity';
       TeacherModelDef,
       UserModelDef
     ])],
-  providers: [SessionService, UserService]
+  providers: [SessionService, UserService],
+  controllers: [SessionController]
 })
 export class SessionModule { }
