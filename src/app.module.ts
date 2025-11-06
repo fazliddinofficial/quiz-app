@@ -9,6 +9,7 @@ import { QuestionModule } from './modules/question/question.module';
 import { SessionModule } from './modules/session/session.module';
 import { AnswerModule } from './modules/answer/answer.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -21,8 +22,9 @@ import { ScheduleModule } from '@nestjs/schedule';
     QuestionModule,
     SessionModule,
     AnswerModule,
+    EventsModule
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }

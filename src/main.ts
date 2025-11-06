@@ -9,7 +9,10 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
-  app.enableCors();
+  app.enableCors({
+    origin: config.CLIENT_URL,
+    credentials: true
+  });
 
   const { error } = configSchema.validate(process.env, {
     allowUnknown: true,

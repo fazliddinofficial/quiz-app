@@ -9,6 +9,7 @@ import { JwtPayload } from 'src/common/types';
 import { JwtService } from '@nestjs/jwt';
 import { JoinStudentToSessionDto } from './dto/create-session.dto';
 import { User } from '../user/entity';
+import { EventsGateway } from 'src/events/events.gateway';
 
 @Injectable()
 export class SessionService {
@@ -18,6 +19,7 @@ export class SessionService {
     @InjectModel(Quiz.name) private readonly QuizModel: Model<Quiz>,
     private readonly UserService: UserService,
     private readonly JwtService: JwtService,
+    private readonly eventsGateWay: EventsGateway,
   ) { }
 
   async createSession(quizId: string, teacherId: string) {
@@ -94,15 +96,26 @@ export class SessionService {
 
     const token = this.JwtService.sign(jwtPayload);
 
+    this.eventsGateWay.notifyStudentJoined(String(foundSession._id), createdStudent._id);
+
     return { token, foundSession: foundSession._id };
   }
 
   async getSessionById(sessionId: Types.ObjectId) {
     const foundSession = await this.SessionModel.findById(sessionId).populate<{ students: User[] }>('students');
-    return { students: foundSession?.students }
+    const studentsNameArray = foundSession?.students.map((value) => value.fullName)
+    return { studentsNameArray }
   }
 
   async getSessionByCode(code: number) {
     return await this.SessionModel.findOne({ code }).populate('students').exec();
+  }
+
+  async updateSessionStudents(sessionId: string) {
+    const session = await this.SessionModel.findById(sessionId);
+    if (!session) {
+      throw new NotFoundException('Session topilmadi!')
+    }
+    this.eventsGateWay.notifyStudentsUpdated(sessionId, session?.students);
   }
 }
