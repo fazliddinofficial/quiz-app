@@ -4,6 +4,4 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   fullName: string;
-
-  sessionCode: number;
 }

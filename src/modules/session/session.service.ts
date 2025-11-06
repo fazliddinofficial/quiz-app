@@ -4,7 +4,10 @@ import { Model } from 'mongoose';
 import { Session } from './entity';
 import { Teacher } from '../teacher/entity';
 import { Quiz } from '../quiz/entity';
-import { CreateSessionDto } from './dto/create-session.dto';
+import { UserService } from '../user/user.service';
+import { JwtPayload } from 'src/common/types';
+import { JwtService } from '@nestjs/jwt';
+import { JoinStudentToSessionDto } from './dto/create-session.dto';
 
 @Injectable()
 export class SessionService {
@@ -12,7 +15,9 @@ export class SessionService {
     @InjectModel(Session.name) private readonly SessionModel: Model<Session>,
     @InjectModel(Teacher.name) private readonly TeacherModel: Model<Teacher>,
     @InjectModel(Quiz.name) private readonly QuizModel: Model<Quiz>,
-  ) {}
+    private readonly UserService: UserService,
+    private readonly JwtService: JwtService
+  ) { }
 
   async createSession(quizId: string, teacherId: string) {
     const expiresAt = new Date();
@@ -60,18 +65,29 @@ export class SessionService {
     userId: string;
     questionId: string;
     sessionId: string;
-  }) {}
+  }) { }
 
-  async joinStudentToSessionByCode(userId: string, code: number) {
+  async joinStudentToSessionByCode({ code,
+    userName
+  }: JoinStudentToSessionDto) {
     const foundSession = await this.SessionModel.findOne({ code });
 
     if (!foundSession) {
       throw new NotFoundException('Quiz topilmadi!');
     }
 
-    foundSession?.students.push(userId);
+    const createdStudent = await this.UserService.createUser({ fullName: userName })
+
+    foundSession?.students.push(String(createdStudent._id));
     foundSession?.save();
 
-    return foundSession;
+    const jwtPayload: JwtPayload = {
+      role: createdStudent.role,
+      userId: createdStudent._id,
+    }
+
+    const token = this.JwtService.sign(jwtPayload);
+
+    return { token, createdStudent, foundSession }
   }
 }

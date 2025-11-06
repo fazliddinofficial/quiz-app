@@ -1,11 +1,20 @@
 import { CONTROLLERS_NAME } from './controllers-name';
 import { PermissionsSetType } from './types';
 
-const { signInTeacher, signUpTeacher, updateTeacherById, createQuestion, createQuiz } =
+const {
+  signInTeacher,
+  signUpTeacher,
+  updateTeacherById,
+  createQuestion,
+  createQuiz,
+  createSession,
+  deactivateSession,
+  joinStudentToSessionByCode
+} =
   CONTROLLERS_NAME;
 
 export const PERMISSIONS: PermissionsSetType = {
-  teacher: new Set([updateTeacherById, createQuestion, createQuiz]),
+  teacher: new Set([updateTeacherById, createQuestion, createQuiz, deactivateSession, createSession]),
   student: new Set([]),
-  whiteList: new Set([signInTeacher, signUpTeacher]),
+  whiteList: new Set([signInTeacher, signUpTeacher, joinStudentToSessionByCode]),
 };

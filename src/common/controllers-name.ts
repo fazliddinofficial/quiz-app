@@ -8,4 +8,6 @@ export const CONTROLLERS_NAME = {
   createQuestion: 'createQuestion',
 
   createSession: 'createSession',
+  deactivateSession: 'deactivateSession',
+  joinStudentToSessionByCode: 'joinStudentToSessionByCode'
 };

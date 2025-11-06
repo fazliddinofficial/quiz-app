@@ -14,7 +14,7 @@ export enum UserRoleEnum {
 }
 
 export type JwtPayload = {
-  phoneNumber: string;
+  phoneNumber?: string;
   role: UserRoleEnum;
   userId: Types.ObjectId;
 };
