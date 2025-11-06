@@ -11,8 +11,8 @@ export class SessionController {
 
   @UseAuthGuard()
   @Post()
-  [CONTROLLERS_NAME.createSession](@Body() data: { quizId: string }, @Req() req: Request) {
-    return this.sessionService.createSession(data.quizId, req['userId']);
+  [CONTROLLERS_NAME.createSession](@Body() data: { quizId?: string }, @Req() req: Request) {
+    return this.sessionService.createSession(req['userId'], data.quizId);
   }
 
   @UseAuthGuard()

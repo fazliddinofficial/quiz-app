@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { HydratedDocument, Model, Types } from 'mongoose';
 import { Session } from './entity';
 import { Teacher } from '../teacher/entity';
 import { Quiz } from '../quiz/entity';
@@ -22,21 +22,27 @@ export class SessionService {
     private readonly eventsGateWay: EventsGateway,
   ) { }
 
-  async createSession(quizId: string, teacherId: string) {
+  async createSession(teacherId: string, quizId: string = '') {
     const foundSession = await this.SessionModel.findOne({ quizId, isActive: true });
-
     if (foundSession) {
       return foundSession;
     }
 
     const expiresAt = new Date();
 
-    const foundQuiz = await this.QuizModel.findById(quizId).lean().exec();
+    let foundQuiz: any;
+    let minutes: number;
 
+    if (quizId === '') {
+      foundQuiz = await this.QuizModel.find().sort({ createdAt: -1 }).limit(1).lean().exec();
+      minutes = foundQuiz[0].questions.length + 1;
+    } else {
+      foundQuiz = await this.QuizModel.findById(quizId).lean().exec();
+      minutes = foundQuiz.questions.length + 1;
+    }
     if (!foundQuiz) {
       throw new NotFoundException('Quiz topilmadi!');
     }
-    const minutes = foundQuiz.questions.length;
 
     expiresAt.setMinutes(expiresAt.getMinutes() + minutes);
 
