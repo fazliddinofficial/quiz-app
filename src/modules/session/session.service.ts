@@ -18,7 +18,7 @@ export class SessionService {
     @InjectModel(Quiz.name) private readonly QuizModel: Model<Quiz>,
     private readonly UserService: UserService,
     private readonly JwtService: JwtService,
-  ) {}
+  ) { }
 
   async createSession(quizId: string, teacherId: string) {
     const foundSession = await this.SessionModel.findOne({ quizId, isActive: true });
@@ -72,14 +72,12 @@ export class SessionService {
     userId: string;
     questionId: string;
     sessionId: string;
-  }) {}
+  }) { }
 
   async joinStudentToSessionByCode({ code, userName }: JoinStudentToSessionDto) {
     code = Number(code);
     const foundSession = await this.SessionModel.findOne({ code })
-      .populate<{ students: User[] }>('students')
-      .exec();
-
+      .populate<{ students: User[] }>('students').exec();
     if (!foundSession) {
       throw new NotFoundException('Quiz topilmadi!');
     }
@@ -96,11 +94,12 @@ export class SessionService {
 
     const token = this.JwtService.sign(jwtPayload);
 
-    return { token, createdStudent, foundSession };
+    return { token, foundSession: foundSession._id };
   }
 
   async getSessionById(sessionId: Types.ObjectId) {
-    return await this.SessionModel.findById(sessionId);
+    const foundSession = await this.SessionModel.findById(sessionId).populate<{ students: User[] }>('students');
+    return { students: foundSession?.students }
   }
 
   async getSessionByCode(code: number) {
