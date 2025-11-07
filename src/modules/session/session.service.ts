@@ -20,7 +20,7 @@ export class SessionService {
     private readonly UserService: UserService,
     private readonly JwtService: JwtService,
     private readonly eventsGateWay: EventsGateway,
-  ) {}
+  ) { }
 
   async createSession(teacherId: string, quizId: string = '') {
     const foundSession = await this.SessionModel.findOne({ quizId, isActive: true });
@@ -80,19 +80,20 @@ export class SessionService {
     userId: string;
     questionId: string;
     sessionId: string;
-  }) {}
+  }) { }
 
   async joinStudentToSessionByCode({ code, userName, uniqueCode }: JoinStudentToSessionDto) {
     code = Number(code);
+
     const foundSession = await this.SessionModel.findOne({ code })
       .populate<{ students: User[] }>('students')
       .exec();
+
     if (!foundSession) {
       throw new NotFoundException('Quiz topilmadi!');
     }
 
     const createdStudent = await this.UserService.createUser({ fullName: userName, uniqueCode });
-    console.log(await this.SessionModel.findById('690d650cd2c1bf448197e051'));
 
     foundSession?.students.push(createdStudent);
     await foundSession?.save();
