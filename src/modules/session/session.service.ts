@@ -20,7 +20,7 @@ export class SessionService {
     private readonly UserService: UserService,
     private readonly JwtService: JwtService,
     private readonly eventsGateWay: EventsGateway,
-  ) { }
+  ) {}
 
   async createSession(teacherId: string, quizId: string = '') {
     const foundSession = await this.SessionModel.findOne({ quizId, isActive: true });
@@ -80,7 +80,7 @@ export class SessionService {
     userId: string;
     questionId: string;
     sessionId: string;
-  }) { }
+  }) {}
 
   async joinStudentToSessionByCode({ code, userName, uniqueCode }: JoinStudentToSessionDto) {
     code = Number(code);
@@ -105,9 +105,9 @@ export class SessionService {
 
     const token = this.JwtService.sign(jwtPayload);
 
-    this.eventsGateWay.notifyStudentJoined(String(foundSession._id), createdStudent._id);
+    this.eventsGateWay.notifyStudentJoined(String(foundSession._id), createdStudent.fullName);
 
-    return { token, foundSession: foundSession._id };
+    return { token, foundSession: foundSession._id, uniqueCode };
   }
 
   async getSessionById(sessionId: Types.ObjectId) {
