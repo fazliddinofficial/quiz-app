@@ -10,7 +10,7 @@ export class SessionController {
   constructor(private readonly sessionService: SessionService) { }
 
   @UseAuthGuard()
-  @Post()
+  @Post('quiz')
   [CONTROLLERS_NAME.createSession](@Body() data: { quizId?: string }, @Req() req: Request) {
     return this.sessionService.createSession(req['userId'], data.quizId);
   }
@@ -31,5 +31,11 @@ export class SessionController {
   @UseAuthGuard()
   [CONTROLLERS_NAME.getSessionById](@Param('id') id: Types.ObjectId) {
     return this.sessionService.getSessionById(id);
+  }
+
+  @Get(':id/students')
+  @UseAuthGuard()
+  [CONTROLLERS_NAME.getAllStudentsList](@Param('id') id: Types.ObjectId) {
+    return this.sessionService.getAllStudentsList(id);
   }
 }

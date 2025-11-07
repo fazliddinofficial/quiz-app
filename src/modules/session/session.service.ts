@@ -55,7 +55,7 @@ export class SessionService {
       code,
     });
 
-    return createdSession;
+    return { sessionId: createdSession._id, code: createdSession.code, success: true }
   }
 
   async deactivateSession(sessionId) {
@@ -123,5 +123,15 @@ export class SessionService {
       throw new NotFoundException('Session topilmadi!')
     }
     this.eventsGateWay.notifyStudentsUpdated(sessionId, session?.students);
+  }
+
+  async getAllStudentsList(sessionId: Types.ObjectId) {
+    const foundSession = await this.SessionModel.findById(sessionId);
+
+    if (!foundSession) {
+      throw new NotFoundException("Quiz topilmadi!(session)")
+    }
+
+    return foundSession.students;
   }
 }
