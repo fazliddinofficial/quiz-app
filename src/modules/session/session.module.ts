@@ -17,4 +17,4 @@ import { EventsGateway } from 'src/events/events.gateway';
   controllers: [SessionController],
   exports: [SessionService],
 })
-export class SessionModule { }
+export class SessionModule {}

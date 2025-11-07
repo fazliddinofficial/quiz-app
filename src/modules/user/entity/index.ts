@@ -11,6 +11,12 @@ export class User {
   fullName: string;
 
   @Prop({
+    type: Number,
+    required: true,
+  })
+  uniqueCode: number;
+
+  @Prop({
     type: String,
     enum: Object.keys(UserRoleEnum),
     default: UserRoleEnum.student,

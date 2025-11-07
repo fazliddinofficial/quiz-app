@@ -11,7 +11,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: config.CLIENT_URL,
-    credentials: true
+    credentials: true,
   });
 
   const { error } = configSchema.validate(process.env, {

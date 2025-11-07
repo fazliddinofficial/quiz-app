@@ -20,7 +20,7 @@ export class SessionService {
     private readonly UserService: UserService,
     private readonly JwtService: JwtService,
     private readonly eventsGateWay: EventsGateway,
-  ) { }
+  ) {}
 
   async createSession(teacherId: string, quizId: string = '') {
     const foundSession = await this.SessionModel.findOne({ quizId, isActive: true });
@@ -55,7 +55,7 @@ export class SessionService {
       code,
     });
 
-    return { sessionId: createdSession._id, code: createdSession.code, success: true }
+    return { sessionId: createdSession._id, code: createdSession.code, success: true };
   }
 
   async deactivateSession(sessionId) {
@@ -80,17 +80,19 @@ export class SessionService {
     userId: string;
     questionId: string;
     sessionId: string;
-  }) { }
+  }) {}
 
-  async joinStudentToSessionByCode({ code, userName }: JoinStudentToSessionDto) {
+  async joinStudentToSessionByCode({ code, userName, uniqueCode }: JoinStudentToSessionDto) {
     code = Number(code);
     const foundSession = await this.SessionModel.findOne({ code })
-      .populate<{ students: User[] }>('students').exec();
+      .populate<{ students: User[] }>('students')
+      .exec();
     if (!foundSession) {
       throw new NotFoundException('Quiz topilmadi!');
     }
 
-    const createdStudent = await this.UserService.createUser({ fullName: userName });
+    const createdStudent = await this.UserService.createUser({ fullName: userName, uniqueCode });
+    console.log(await this.SessionModel.findById('690d650cd2c1bf448197e051'));
 
     foundSession?.students.push(createdStudent);
     await foundSession?.save();
@@ -108,9 +110,11 @@ export class SessionService {
   }
 
   async getSessionById(sessionId: Types.ObjectId) {
-    const foundSession = await this.SessionModel.findById(sessionId).populate<{ students: User[] }>('students');
-    const studentsNameArray = foundSession?.students.map((value) => value.fullName)
-    return { studentsNameArray }
+    const foundSession = await this.SessionModel.findById(sessionId).populate<{ students: User[] }>(
+      'students',
+    );
+    const studentsNameArray = foundSession?.students.map((value) => value.fullName);
+    return { studentsNameArray };
   }
 
   async getSessionByCode(code: number) {
@@ -120,7 +124,7 @@ export class SessionService {
   async updateSessionStudents(sessionId: string) {
     const session = await this.SessionModel.findById(sessionId);
     if (!session) {
-      throw new NotFoundException('Session topilmadi!')
+      throw new NotFoundException('Session topilmadi!');
     }
     this.eventsGateWay.notifyStudentsUpdated(sessionId, session?.students);
   }
@@ -129,9 +133,11 @@ export class SessionService {
     const foundSession = await this.SessionModel.findById(sessionId);
 
     if (!foundSession) {
-      throw new NotFoundException("Quiz topilmadi!(session)")
+      throw new NotFoundException('Quiz topilmadi!(session)');
     }
 
-    return foundSession.students;
+    return foundSession.students.map((v) => {
+      return v.fullName;
+    });
   }
 }

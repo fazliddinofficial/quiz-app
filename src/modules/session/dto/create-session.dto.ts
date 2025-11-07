@@ -11,4 +11,8 @@ export class JoinStudentToSessionDto {
 
   @IsNotEmpty()
   code: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  uniqueCode: number;
 }

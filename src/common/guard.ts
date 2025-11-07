@@ -20,7 +20,10 @@ export class AuthGuard implements CanActivate {
 
     const action = context.getHandler().name as HandlersKeys;
 
+    const uniqueCode = request.body?.uniqueCode;
+
     if (PERMISSIONS.whiteList.has(action)) {
+      request['uniqueCode'] = uniqueCode;
       request['userPhone'] = request.body.phoneNumber;
       return true;
     }

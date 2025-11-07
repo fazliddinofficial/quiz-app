@@ -7,7 +7,7 @@ import { Types } from 'mongoose';
 
 @Controller('session')
 export class SessionController {
-  constructor(private readonly sessionService: SessionService) { }
+  constructor(private readonly sessionService: SessionService) {}
 
   @UseAuthGuard()
   @Post('quiz')

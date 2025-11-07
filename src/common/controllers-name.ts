@@ -12,5 +12,5 @@ export const CONTROLLERS_NAME = {
   joinStudentToSessionByCode: 'joinStudentToSessionByCode',
 
   getSessionById: 'getSessionById',
-  getAllStudentsList: 'getAllStudentsList'
+  getAllStudentsList: 'getAllStudentsList',
 };

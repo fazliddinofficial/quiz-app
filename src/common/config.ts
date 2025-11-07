@@ -15,5 +15,5 @@ export const config: IConfig = {
   PORT: Number(process.env.PORT),
   DB_URL: String(process.env.DB_URL),
   JWT_SECRET_KEY: String(process.env.JWT_SECRET_KEY),
-  CLIENT_URL: String(process.env.CLIENT_URL)
+  CLIENT_URL: String(process.env.CLIENT_URL),
 };

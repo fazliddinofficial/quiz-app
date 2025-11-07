@@ -22,9 +22,9 @@ import { EventsModule } from './events/events.module';
     QuestionModule,
     SessionModule,
     AnswerModule,
-    EventsModule
+    EventsModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}
