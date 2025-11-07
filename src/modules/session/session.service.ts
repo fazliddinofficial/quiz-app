@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { HydratedDocument, Model, Types } from 'mongoose';
 import { Session } from './entity';
 import { Teacher } from '../teacher/entity';
 import { Quiz } from '../quiz/entity';
@@ -8,6 +8,8 @@ import { UserService } from '../user/user.service';
 import { JwtPayload } from 'src/common/types';
 import { JwtService } from '@nestjs/jwt';
 import { JoinStudentToSessionDto } from './dto/create-session.dto';
+import { User } from '../user/entity';
+import { EventsGateway } from 'src/events/events.gateway';
 
 @Injectable()
 export class SessionService {
@@ -16,24 +18,31 @@ export class SessionService {
     @InjectModel(Teacher.name) private readonly TeacherModel: Model<Teacher>,
     @InjectModel(Quiz.name) private readonly QuizModel: Model<Quiz>,
     private readonly UserService: UserService,
-    private readonly JwtService: JwtService
+    private readonly JwtService: JwtService,
+    private readonly eventsGateWay: EventsGateway,
   ) { }
 
-  async createSession(quizId: string, teacherId: string) {
+  async createSession(teacherId: string, quizId: string = '') {
     const foundSession = await this.SessionModel.findOne({ quizId, isActive: true });
-
     if (foundSession) {
       return foundSession;
     }
 
     const expiresAt = new Date();
 
-    const foundQuiz = await this.QuizModel.findById(quizId).lean().exec();
+    let foundQuiz: any;
+    let minutes: number;
 
+    if (quizId === '') {
+      foundQuiz = await this.QuizModel.find().sort({ createdAt: -1 }).limit(1).lean().exec();
+      minutes = foundQuiz[0].questions.length + 1;
+    } else {
+      foundQuiz = await this.QuizModel.findById(quizId).lean().exec();
+      minutes = foundQuiz.questions.length + 1;
+    }
     if (!foundQuiz) {
       throw new NotFoundException('Quiz topilmadi!');
     }
-    const minutes = foundQuiz.questions.length;
 
     expiresAt.setMinutes(expiresAt.getMinutes() + minutes);
 
@@ -46,7 +55,7 @@ export class SessionService {
       code,
     });
 
-    return createdSession;
+    return { sessionId: createdSession._id, code: createdSession.code, success: true }
   }
 
   async deactivateSession(sessionId) {
@@ -73,27 +82,56 @@ export class SessionService {
     sessionId: string;
   }) { }
 
-  async joinStudentToSessionByCode({ code,
-    userName
-  }: JoinStudentToSessionDto) {
-    const foundSession = await this.SessionModel.findOne({ code });
-
+  async joinStudentToSessionByCode({ code, userName }: JoinStudentToSessionDto) {
+    code = Number(code);
+    const foundSession = await this.SessionModel.findOne({ code })
+      .populate<{ students: User[] }>('students').exec();
     if (!foundSession) {
       throw new NotFoundException('Quiz topilmadi!');
     }
 
-    const createdStudent = await this.UserService.createUser({ fullName: userName })
+    const createdStudent = await this.UserService.createUser({ fullName: userName });
 
-    foundSession?.students.push(String(createdStudent._id));
-    foundSession?.save();
+    foundSession?.students.push(createdStudent);
+    await foundSession?.save();
 
     const jwtPayload: JwtPayload = {
       role: createdStudent.role,
       userId: createdStudent._id,
-    }
+    };
 
     const token = this.JwtService.sign(jwtPayload);
 
-    return { token, createdStudent, foundSession }
+    this.eventsGateWay.notifyStudentJoined(String(foundSession._id), createdStudent._id);
+
+    return { token, foundSession: foundSession._id };
+  }
+
+  async getSessionById(sessionId: Types.ObjectId) {
+    const foundSession = await this.SessionModel.findById(sessionId).populate<{ students: User[] }>('students');
+    const studentsNameArray = foundSession?.students.map((value) => value.fullName)
+    return { studentsNameArray }
+  }
+
+  async getSessionByCode(code: number) {
+    return await this.SessionModel.findOne({ code }).populate('students').exec();
+  }
+
+  async updateSessionStudents(sessionId: string) {
+    const session = await this.SessionModel.findById(sessionId);
+    if (!session) {
+      throw new NotFoundException('Session topilmadi!')
+    }
+    this.eventsGateWay.notifyStudentsUpdated(sessionId, session?.students);
+  }
+
+  async getAllStudentsList(sessionId: Types.ObjectId) {
+    const foundSession = await this.SessionModel.findById(sessionId);
+
+    if (!foundSession) {
+      throw new NotFoundException("Quiz topilmadi!(session)")
+    }
+
+    return foundSession.students;
   }
 }

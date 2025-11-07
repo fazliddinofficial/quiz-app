@@ -9,12 +9,21 @@ const {
   createQuiz,
   createSession,
   deactivateSession,
-  joinStudentToSessionByCode
-} =
-  CONTROLLERS_NAME;
+  joinStudentToSessionByCode,
+  getSessionById,
+  getAllStudentsList
+} = CONTROLLERS_NAME;
 
 export const PERMISSIONS: PermissionsSetType = {
-  teacher: new Set([updateTeacherById, createQuestion, createQuiz, deactivateSession, createSession]),
-  student: new Set([]),
+  teacher: new Set([
+    updateTeacherById,
+    getSessionById,
+    createQuestion,
+    createQuiz,
+    deactivateSession,
+    createSession,
+    getAllStudentsList
+  ]),
+  student: new Set([getSessionById, getAllStudentsList]),
   whiteList: new Set([signInTeacher, signUpTeacher, joinStudentToSessionByCode]),
 };

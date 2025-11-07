@@ -22,7 +22,7 @@ export class QuizService {
     }
 
     foundTeacher?.createdQuizzes.push(`${createdQuiz._id}`);
-    foundTeacher?.save();
+    await foundTeacher?.save();
 
     return createdQuiz;
   }
