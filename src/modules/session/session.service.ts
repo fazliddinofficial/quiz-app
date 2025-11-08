@@ -24,7 +24,7 @@ export class SessionService {
     private readonly UserService: UserService,
     private readonly JwtService: JwtService,
     private readonly eventsGateWay: EventsGateway,
-  ) { }
+  ) {}
   @WebSocketServer()
   server: Server;
 
@@ -86,7 +86,7 @@ export class SessionService {
     userId: string;
     questionId: string;
     sessionId: string;
-  }) { }
+  }) {}
 
   async joinStudentToSessionByCode({ code, userName, uniqueCode }: JoinStudentToSessionDto) {
     code = Number(code);
@@ -151,15 +151,16 @@ export class SessionService {
   async startSessionById(sessionId: string) {
     const foundSession = await this.SessionModel.findById(sessionId);
     if (!foundSession) {
-      throw new NotFoundException("Quiz topilmadi (Session topilmadi)");
+      throw new NotFoundException('Quiz topilmadi (Session topilmadi)');
     }
 
-    const foundQuiz = await this.QuizModel.findById(foundSession.quizId)
-      .populate<{ questions: Question[] }>('questions');
+    const foundQuiz = await this.QuizModel.findById(foundSession.quizId).populate<{
+      questions: Question[];
+    }>('questions');
 
-    this.eventsGateWay.emitToSession(sessionId, "quizStarted", foundSession?.duration);
+    this.eventsGateWay.emitToSession(sessionId, 'quizStarted', foundSession?.duration);
 
-    console.log('heeee')
+    console.log('heeee');
 
     this.startSendingQuestion(sessionId, 0);
 
@@ -167,8 +168,9 @@ export class SessionService {
   }
 
   async startSendingQuestion(sessionId: string, questionIndex: number = 0) {
-    const session = await this.SessionModel.findById(sessionId)
-      .populate<{ quizId: Quiz }>('quizId');
+    const session = await this.SessionModel.findById(sessionId).populate<{ quizId: Quiz }>(
+      'quizId',
+    );
 
     const questions = session?.quizId.questions;
 
@@ -179,7 +181,7 @@ export class SessionService {
     const foundQuestion = await this.QuestionModel.findById(questions[questionIndex]);
 
     if (!foundQuestion) {
-      throw new NotFoundException('not found')
+      throw new NotFoundException('not found');
     }
 
     return foundQuestion;
@@ -188,7 +190,7 @@ export class SessionService {
   async handleStart(sessionId: string) {
     const foundSession = await this.SessionModel.findById(sessionId);
 
-    this.eventsGateWay.emitToSession(sessionId, "quizStarted", foundSession?.duration);
+    this.eventsGateWay.emitToSession(sessionId, 'quizStarted', foundSession?.duration);
 
     return foundSession?.duration;
   }

@@ -12,10 +12,16 @@ import { QuestionModelDef } from '../question/entity';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([SessionModelDef, QuizModelDef, TeacherModelDef, UserModelDef, QuestionModelDef]),
+    MongooseModule.forFeature([
+      SessionModelDef,
+      QuizModelDef,
+      TeacherModelDef,
+      UserModelDef,
+      QuestionModelDef,
+    ]),
   ],
   providers: [SessionService, UserService, EventsGateway],
   controllers: [SessionController],
   exports: [SessionService],
 })
-export class SessionModule { }
+export class SessionModule {}

@@ -29,9 +29,9 @@ export class Question {
   quizId: string;
 
   @Prop({
-    type: Number
+    type: Number,
   })
-  questionIndex: number
+  questionIndex: number;
 }
 
 export const QuestionSchema = SchemaFactory.createForClass(Question);

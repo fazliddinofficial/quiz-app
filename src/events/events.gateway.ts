@@ -10,7 +10,7 @@ import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
   cors: {
-    origin: "*",
+    origin: '*',
     credentials: true,
   },
 })
@@ -21,11 +21,11 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private sessions: Map<string, string[]> = new Map();
 
   quizStarted(sessionId: string) {
-    this.server.to(sessionId).emit('quizStarted', { sessionId })
+    this.server.to(sessionId).emit('quizStarted', { sessionId });
   }
 
   async sendQuestion(sessionId: string, question: any) {
-    this.server.to(sessionId).emit('newQuestion', question)
+    this.server.to(sessionId).emit('newQuestion', question);
   }
 
   handleConnection(client: Socket, ...args: any[]) {
@@ -77,40 +77,46 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.emitToSession(sessionId, 'studentsUpdated', students);
   }
 
-  @SubscribeMessage("startQuiz")
+  @SubscribeMessage('startQuiz')
   handleStartQuiz(@MessageBody() data: { sessionId: string }) {
     const room = this.server.sockets.adapter.rooms.get(data.sessionId);
-    console.log("Room members for session:", data.sessionId, room ? [...room] : "No one joined yet");
+    console.log(
+      'Room members for session:',
+      data.sessionId,
+      room ? [...room] : 'No one joined yet',
+    );
 
-    this.server.to(data.sessionId).emit("quizStarted", { sessionId: data.sessionId });
+    this.server.to(data.sessionId).emit('quizStarted', { sessionId: data.sessionId });
 
     console.log('Backend emitted event quizStarted');
   }
 
-  @SubscribeMessage("nextQuestion")
+  @SubscribeMessage('nextQuestion')
   handleNextQuestion(@MessageBody() data: { sessionId: string; question: any }) {
     this.sendQuestion(data.sessionId, data.question);
   }
 
-  @SubscribeMessage("answerSubmitted")
-  handleAnswerSubmitted(@MessageBody() data: {
-    sessionId: string;
-    questionIndex: number;
-    answer: string;
-    clientId?: string;
-  }) {
-    console.log("Answer submitted in session: ", data.sessionId, {
-      questionIndex: data.questionIndex,
-      answer: data.answer,
-      clientId: data.clientId
-    });
-
-    this.server.to(data.sessionId).emit("answerReceived", {
+  @SubscribeMessage('answerSubmitted')
+  handleAnswerSubmitted(
+    @MessageBody()
+    data: {
+      sessionId: string;
+      questionIndex: number;
+      answer: string;
+      clientId?: string;
+    },
+  ) {
+    console.log('Answer submitted in session: ', data.sessionId, {
       questionIndex: data.questionIndex,
       answer: data.answer,
       clientId: data.clientId,
-      timestamp: new Date().toISOString()
+    });
+
+    this.server.to(data.sessionId).emit('answerReceived', {
+      questionIndex: data.questionIndex,
+      answer: data.answer,
+      clientId: data.clientId,
+      timestamp: new Date().toISOString(),
     });
   }
-
 }

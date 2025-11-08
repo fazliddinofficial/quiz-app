@@ -7,7 +7,7 @@ import { Types } from 'mongoose';
 
 @Controller('session')
 export class SessionController {
-  constructor(private readonly sessionService: SessionService) { }
+  constructor(private readonly sessionService: SessionService) {}
 
   @UseAuthGuard()
   @Post('quiz')
@@ -52,6 +52,6 @@ export class SessionController {
 
   @Get(':id/handle-start')
   [CONTROLLERS_NAME.handleStart](@Param('id') id: string) {
-    return this.sessionService.handleStart(id)
+    return this.sessionService.handleStart(id);
   }
 }

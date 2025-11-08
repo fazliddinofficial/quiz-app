@@ -18,5 +18,5 @@ export const CONTROLLERS_NAME = {
 
   startSendingQuestion: 'startSendingQuestion',
 
-  handleStart: 'handleStart'
+  handleStart: 'handleStart',
 };

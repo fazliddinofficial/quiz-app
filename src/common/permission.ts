@@ -12,7 +12,7 @@ const {
   joinStudentToSessionByCode,
   getSessionById,
   getAllStudentsList,
-  startSessionById
+  startSessionById,
 } = CONTROLLERS_NAME;
 
 export const PERMISSIONS: PermissionsSetType = {
@@ -24,7 +24,7 @@ export const PERMISSIONS: PermissionsSetType = {
     deactivateSession,
     createSession,
     getAllStudentsList,
-    startSessionById
+    startSessionById,
   ]),
   student: new Set([getSessionById, getAllStudentsList]),
   whiteList: new Set([signInTeacher, signUpTeacher, joinStudentToSessionByCode]),

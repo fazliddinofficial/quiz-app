@@ -10,7 +10,7 @@ export class QuestionService {
   constructor(
     @InjectModel(Question.name) private readonly QuestionModel: Model<Question>,
     @InjectModel(Quiz.name) private readonly QuizModel: Model<Quiz>,
-  ) { }
+  ) {}
 
   async createQuestion({ quizId, ...data }: CreateQuestionDto) {
     const foundQuiz = await this.QuizModel.findById(quizId);
@@ -21,7 +21,10 @@ export class QuestionService {
 
     const indexOfQuestion = (await this.QuestionModel.find()).length;
 
-    const createdQuestion = await this.QuestionModel.create({ ...data, questionIndex: indexOfQuestion + 1 });
+    const createdQuestion = await this.QuestionModel.create({
+      ...data,
+      questionIndex: indexOfQuestion + 1,
+    });
 
     foundQuiz.questions.push(String(createdQuestion._id));
     await foundQuiz.save();
