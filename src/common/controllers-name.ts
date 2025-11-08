@@ -13,4 +13,10 @@ export const CONTROLLERS_NAME = {
 
   getSessionById: 'getSessionById',
   getAllStudentsList: 'getAllStudentsList',
+
+  startSessionById: 'startSessionById',
+
+  startSendingQuestion: 'startSendingQuestion',
+
+  handleStart: 'handleStart'
 };

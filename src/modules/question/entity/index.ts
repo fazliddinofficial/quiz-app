@@ -1,4 +1,5 @@
 import { ModelDefinition, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { string } from 'joi';
 import { Types } from 'mongoose';
 
 @Schema({ versionKey: false, timestamps: true })
@@ -26,6 +27,11 @@ export class Question {
     ref: 'Quiz',
   })
   quizId: string;
+
+  @Prop({
+    type: Number
+  })
+  questionIndex: number
 }
 
 export const QuestionSchema = SchemaFactory.createForClass(Question);

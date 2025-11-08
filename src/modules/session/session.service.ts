@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConsoleLogger, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { HydratedDocument, Model, Types } from 'mongoose';
 import { Session } from './entity';
@@ -10,6 +10,9 @@ import { JwtService } from '@nestjs/jwt';
 import { JoinStudentToSessionDto } from './dto/create-session.dto';
 import { User } from '../user/entity';
 import { EventsGateway } from 'src/events/events.gateway';
+import { Question } from '../question/entity';
+import { WebSocketServer } from '@nestjs/websockets';
+import { Server } from 'socket.io';
 
 @Injectable()
 export class SessionService {
@@ -17,10 +20,13 @@ export class SessionService {
     @InjectModel(Session.name) private readonly SessionModel: Model<Session>,
     @InjectModel(Teacher.name) private readonly TeacherModel: Model<Teacher>,
     @InjectModel(Quiz.name) private readonly QuizModel: Model<Quiz>,
+    @InjectModel(Question.name) private readonly QuestionModel: Model<Question>,
     private readonly UserService: UserService,
     private readonly JwtService: JwtService,
     private readonly eventsGateWay: EventsGateway,
-  ) {}
+  ) { }
+  @WebSocketServer()
+  server: Server;
 
   async createSession(teacherId: string, quizId: string = '') {
     const foundSession = await this.SessionModel.findOne({ quizId, isActive: true });
@@ -80,7 +86,7 @@ export class SessionService {
     userId: string;
     questionId: string;
     sessionId: string;
-  }) {}
+  }) { }
 
   async joinStudentToSessionByCode({ code, userName, uniqueCode }: JoinStudentToSessionDto) {
     code = Number(code);
@@ -140,5 +146,50 @@ export class SessionService {
     return foundSession.students.map((v) => {
       return v.fullName;
     });
+  }
+
+  async startSessionById(sessionId: string) {
+    const foundSession = await this.SessionModel.findById(sessionId);
+    if (!foundSession) {
+      throw new NotFoundException("Quiz topilmadi (Session topilmadi)");
+    }
+
+    const foundQuiz = await this.QuizModel.findById(foundSession.quizId)
+      .populate<{ questions: Question[] }>('questions');
+
+    this.eventsGateWay.emitToSession(sessionId, "quizStarted", foundSession?.duration);
+
+    console.log('heeee')
+
+    this.startSendingQuestion(sessionId, 0);
+
+    return foundQuiz;
+  }
+
+  async startSendingQuestion(sessionId: string, questionIndex: number = 0) {
+    const session = await this.SessionModel.findById(sessionId)
+      .populate<{ quizId: Quiz }>('quizId');
+
+    const questions = session?.quizId.questions;
+
+    if (!questions?.length) {
+      throw new NotFoundException('Savollar topilmadi');
+    }
+
+    const foundQuestion = await this.QuestionModel.findById(questions[questionIndex]);
+
+    if (!foundQuestion) {
+      throw new NotFoundException('not found')
+    }
+
+    return foundQuestion;
+  }
+
+  async handleStart(sessionId: string) {
+    const foundSession = await this.SessionModel.findById(sessionId);
+
+    this.eventsGateWay.emitToSession(sessionId, "quizStarted", foundSession?.duration);
+
+    return foundSession?.duration;
   }
 }

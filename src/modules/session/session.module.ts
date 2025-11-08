@@ -8,13 +8,14 @@ import { UserService } from '../user/user.service';
 import { UserModelDef } from '../user/entity';
 import { SessionController } from './session.controller';
 import { EventsGateway } from 'src/events/events.gateway';
+import { QuestionModelDef } from '../question/entity';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([SessionModelDef, QuizModelDef, TeacherModelDef, UserModelDef]),
+    MongooseModule.forFeature([SessionModelDef, QuizModelDef, TeacherModelDef, UserModelDef, QuestionModelDef]),
   ],
   providers: [SessionService, UserService, EventsGateway],
   controllers: [SessionController],
   exports: [SessionService],
 })
-export class SessionModule {}
+export class SessionModule { }

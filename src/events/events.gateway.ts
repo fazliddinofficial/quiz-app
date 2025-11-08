@@ -1,4 +1,5 @@
 import {
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   SubscribeMessage,
@@ -9,7 +10,7 @@ import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
   cors: {
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin: "*",
     credentials: true,
   },
 })
@@ -19,9 +20,15 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private sessions: Map<string, string[]> = new Map();
 
-  handleConnection(client: Socket, ...args: any[]) {
-    console.log('Client connected: ', client.id);
+  quizStarted(sessionId: string) {
+    this.server.to(sessionId).emit('quizStarted', { sessionId })
+  }
 
+  async sendQuestion(sessionId: string, question: any) {
+    this.server.to(sessionId).emit('newQuestion', question)
+  }
+
+  handleConnection(client: Socket, ...args: any[]) {
     const sessionId = client.handshake.query.sessionId as string;
     if (sessionId) {
       this.joinSession(client, sessionId);
@@ -29,7 +36,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   handleDisconnect(client: Socket) {
-    console.log('Client disconnected: ', client.id);
     this.leaveAllSessions(client);
   }
 
@@ -40,8 +46,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.sessions.set(sessionId, []);
     }
     this.sessions.get(sessionId)?.push(client.id);
-
-    console.log(`Client ${client.id} joined session ${sessionId}`);
   }
 
   private leaveAllSessions(client: Socket) {
@@ -72,4 +76,41 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   notifyStudentsUpdated(sessionId: string, students: any[]) {
     this.emitToSession(sessionId, 'studentsUpdated', students);
   }
+
+  @SubscribeMessage("startQuiz")
+  handleStartQuiz(@MessageBody() data: { sessionId: string }) {
+    const room = this.server.sockets.adapter.rooms.get(data.sessionId);
+    console.log("Room members for session:", data.sessionId, room ? [...room] : "No one joined yet");
+
+    this.server.to(data.sessionId).emit("quizStarted", { sessionId: data.sessionId });
+
+    console.log('Backend emitted event quizStarted');
+  }
+
+  @SubscribeMessage("nextQuestion")
+  handleNextQuestion(@MessageBody() data: { sessionId: string; question: any }) {
+    this.sendQuestion(data.sessionId, data.question);
+  }
+
+  @SubscribeMessage("answerSubmitted")
+  handleAnswerSubmitted(@MessageBody() data: {
+    sessionId: string;
+    questionIndex: number;
+    answer: string;
+    clientId?: string;
+  }) {
+    console.log("Answer submitted in session: ", data.sessionId, {
+      questionIndex: data.questionIndex,
+      answer: data.answer,
+      clientId: data.clientId
+    });
+
+    this.server.to(data.sessionId).emit("answerReceived", {
+      questionIndex: data.questionIndex,
+      answer: data.answer,
+      clientId: data.clientId,
+      timestamp: new Date().toISOString()
+    });
+  }
+
 }

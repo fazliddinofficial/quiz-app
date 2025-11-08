@@ -7,7 +7,7 @@ import { Types } from 'mongoose';
 
 @Controller('session')
 export class SessionController {
-  constructor(private readonly sessionService: SessionService) {}
+  constructor(private readonly sessionService: SessionService) { }
 
   @UseAuthGuard()
   @Post('quiz')
@@ -37,5 +37,21 @@ export class SessionController {
   @UseAuthGuard()
   [CONTROLLERS_NAME.getAllStudentsList](@Param('id') id: Types.ObjectId) {
     return this.sessionService.getAllStudentsList(id);
+  }
+
+  @Get(':id/session')
+  @UseAuthGuard()
+  [CONTROLLERS_NAME.startSessionById](@Param('id') id: string) {
+    return this.sessionService.startSessionById(id);
+  }
+
+  @Get(':id/start')
+  [CONTROLLERS_NAME.startSendingQuestion](@Param('id') id: string) {
+    return this.sessionService.startSendingQuestion(id);
+  }
+
+  @Get(':id/handle-start')
+  [CONTROLLERS_NAME.handleStart](@Param('id') id: string) {
+    return this.sessionService.handleStart(id)
   }
 }
